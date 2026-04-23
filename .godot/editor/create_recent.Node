@@ -1,0 +1,10 @@
+AnimationTree
+AnimationPlayer
+CharacterBody2D
+RayCast2D
+CollisionPolygon2D
+CollisionShape2D
+Sprite2D
+StaticBody2D
+TileMapLayer
+Camera2D
