@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://c4kvybwesramh"]
+
+[ext_resource type="Texture2D" uid="uid://cgli3nppe73qi" path="res://chave.png" id="1_8ynoy"]
+[ext_resource type="Script" uid="uid://helcdtfahm0a" path="res://ItemData.gd" id="1_oxbvm"]
+
+[resource]
+script = ExtResource("1_oxbvm")
+nome = "Chave da Biblioteca"
+descricao = "Nada"
+icone = ExtResource("1_8ynoy")
+id_unico = "Chave da Biblioteca"
+usos = 2
+metadata/_custom_type_script = "uid://helcdtfahm0a"

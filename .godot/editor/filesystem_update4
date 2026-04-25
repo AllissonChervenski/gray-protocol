@@ -1,1 +1,7 @@
 res://mundo.tscn
+res://jogador.gd
+res://porta.gd
+res://item_coletavel.gd
+res://ItemData.gd
+res://chave.tres
+res://inventario_ui.gd

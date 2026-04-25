@@ -7,6 +7,14 @@
 [ext_resource type="Texture2D" uid="uid://bnc8jus3o287v" path="res://boneco.png" id="4_2hh7m"]
 [ext_resource type="Script" uid="uid://bmk3e60vpjk4d" path="res://caixa_objeto.gd" id="4_5ckkb"]
 [ext_resource type="Texture2D" uid="uid://8vkh4swahj06" path="res://sprite_sheet_down-removebg-preview.png" id="5_2hh7m"]
+[ext_resource type="Script" uid="uid://bakijnu6s22e8" path="res://porta.gd" id="8_pfhxm"]
+[ext_resource type="Texture2D" uid="uid://duyitehrssq4a" path="res://door-removebg-preview.png" id="8_t8jxu"]
+[ext_resource type="Script" uid="uid://7kjv1nlb5nop" path="res://placa_pressao.gd" id="10_pij3u"]
+[ext_resource type="Script" uid="uid://bdjvmi1oobivo" path="res://item_coletavel.gd" id="11_0oi55"]
+[ext_resource type="Resource" uid="uid://c4kvybwesramh" path="res://chave.tres" id="12_0crsg"]
+[ext_resource type="Texture2D" uid="uid://cgli3nppe73qi" path="res://chave.png" id="12_57gmc"]
+[ext_resource type="Script" uid="uid://dlvl0ilaeccq6" path="res://inventario_ui.gd" id="14_5g5eo"]
+[ext_resource type="PackedScene" uid="uid://ipuq5uem4nyi" path="res://Slot.tscn" id="15_lwdvv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ckkb"]
 texture = ExtResource("1_fw4w5")
@@ -335,16 +343,93 @@ _data = {
 &"walk_up": SubResource("Animation_pfhxm")
 }
 
+[sub_resource type="Animation" id="Animation_0oi55"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_57gmc"]
+resource_name = "abrir"
+length = 0.26666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_0crsg"]
+resource_name = "fechar"
+length = 0.26666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0crsg"]
+_data = {
+&"RESET": SubResource("Animation_0oi55"),
+&"abrir": SubResource("Animation_57gmc"),
+&"fechar": SubResource("Animation_0crsg")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pfhxm"]
+size = Vector2(74.25, 55)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t8jxu"]
+size = Vector2(66, 26)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pij3u"]
+size = Vector2(44, 4)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0crsg"]
+size = Vector2(321.4591, 179.22803)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qobow"]
+bg_color = Color(0.20970981, 0.20970981, 0.20970981, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5g5eo"]
+
 [node name="Mundo" type="Node2D" unique_id=1712903663]
 y_sort_enabled = true
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=833315343]
+visibility_layer = 2
 z_index = -1
-position = Vector2(-18, 1)
+position = Vector2(-16, 2)
 tile_map_data = PackedByteArray("AAD+////AQAAAAAAAAD///7/AQAAAAAAAAD///3/AQAAAAAAAAAAAP//AQAAAAAAAAAAAAAAAQAAAAAAAAABAP7/AQAAAAAAAAAAAAIAAQAAAAAAAAD//wMAAQAAAAAAAAD//wQAAQAAAAAAAAD+/wMAAQAAAAAAAAD+/wIAAQAAAAAAAAD9////AQAAAAAAAAD//wIAAQAAAAAAAAD9/wAAAQAAAAAAAAD9/wEAAQAAAAAAAAD9//7/AQAAAAAAAAD9//3/AQAAAAAAAAD+//z/AQAAAAAAAAD+//3/AQAAAAAAAAD///z/AQAAAAAAAAD///v/AQAAAAAAAAAAAPr/AQAAAAAAAAD+//7/AQAAAAAAAAD+//v/AQAAAAAAAAD///r/AQAAAAAAAAAAAPv/AQAAAAAAAAABAPz/AQAAAAAAAAABAP3/AQAAAAAAAAABAP//AQAAAAAAAAABAAAAAQAAAAAAAAAAAAEAAQAAAAAAAAACAP7/AQAAAAAAAAD///n/AQAAAAAAAAD///j/AQAAAAAAAAD+//n/AQAAAAAAAAD+//r/AQAAAAAAAAD9//v/AQAAAAAAAAD9//z/AQAAAAAAAAD8//3/AQAAAAAAAAD8////AQAAAAAAAAAAAAQAAQAAAAAAAAAAAAMAAQAAAAAAAAABAAIAAQAAAAAAAAABAAEAAQAAAAAAAAACAAAAAQAAAAAAAAACAP//AQAAAAAAAAAAAAYAAQAAAAAAAAAAAAUAAQAAAAAAAAABAAQAAQAAAAAAAAABAAMAAQAAAAAAAAACAAIAAQAAAAAAAAACAAEAAQAAAAAAAAADAAAAAQAAAAAAAAACAAgAAQAAAAAAAAABAAkAAQAAAAAAAAAAAAkAAQAAAAAAAAAAAAoAAQAAAAAAAAD//woAAQAAAAAAAAD+/woAAQAAAAAAAAD9/wkAAQAAAAAAAAD8/wkAAQAAAAAAAAD8/wgAAQAAAAAAAAD7/wcAAQAAAAAAAAD7/wgAAQAAAAAAAAD7/wkAAQAAAAAAAAD8/woAAQAAAAAAAAD7/woAAQAAAAAAAAD6/wkAAQAAAAAAAAD7/wYAAQAAAAAAAAD7/wUAAQAAAAAAAAD7/wQAAQAAAAAAAAD7/wMAAQAAAAAAAAD7/wIAAQAAAAAAAAD7/wEAAQAAAAAAAAD7/wAAAQAAAAAAAAD6////AQAAAAAAAAD7//7/AQAAAAAAAAD6//3/AQAAAAAAAAD7//z/AQAAAAAAAAD7//v/AQAAAAAAAAD7//r/AQAAAAAAAAD7//3/AQAAAAAAAAD7////AQAAAAAAAAD6/wEAAQAAAAAAAAD6//v/AQAAAAAAAAD7//n/AQAAAAAAAAD7//j/AQAAAAAAAAD7//f/AQAAAAAAAAD7//b/AQAAAAAAAAD8//b/AQAAAAAAAAD8//X/AQAAAAAAAAD9//T/AQAAAAAAAAD8//f/AQAAAAAAAAD8//j/AQAAAAAAAAD8//r/AQAAAAAAAAD8//n/AQAAAAAAAAD9//b/AQAAAAAAAAD9//f/AQAAAAAAAAD9//j/AQAAAAAAAAD9//r/AQAAAAAAAAD8//v/AQAAAAAAAAD9//n/AQAAAAAAAAD+//j/AQAAAAAAAAD+//f/AQAAAAAAAAD+//b/AQAAAAAAAAD+//X/AQAAAAAAAAD+//T/AQAAAAAAAAD9//P/AQAAAAAAAAD9//X/AQAAAAAAAAD7//X/AQAAAAAAAAD6//X/AQAAAAAAAAD7//T/AQAAAAAAAAD8//T/AQAAAAAAAAD6//f/AQAAAAAAAAD6//n/AQAAAAAAAAD8//7/AQAAAAAAAAD8//z/AQAAAAAAAAD8/wAAAQAAAAAAAAD8/wEAAQAAAAAAAAD8/wIAAQAAAAAAAAD8/wMAAQAAAAAAAAD8/wQAAQAAAAAAAAD8/wUAAQAAAAAAAAD8/wYAAQAAAAAAAAD6/wUAAQAAAAAAAAD6/wMAAQAAAAAAAAD6/wIAAQAAAAAAAAD6/wQAAQAAAAAAAAD6/wcAAQAAAAAAAAD8/wcAAQAAAAAAAAD9/wYAAQAAAAAAAAD9/wcAAQAAAAAAAAD9/wUAAQAAAAAAAAD9/wQAAQAAAAAAAAD9/wIAAQAAAAAAAAD9/wMAAQAAAAAAAAD+/wUAAQAAAAAAAAD//wYAAQAAAAAAAAD//wcAAQAAAAAAAAAAAAgAAQAAAAAAAAD//wkAAQAAAAAAAAD+/wkAAQAAAAAAAAD+/wgAAQAAAAAAAAD//wgAAQAAAAAAAAD+/wcAAQAAAAAAAAD+/wYAAQAAAAAAAAD9/wgAAQAAAAAAAAABAAgAAQAAAAAAAAACAAcAAQAAAAAAAAADAAgAAQAAAAAAAAADAAcAAQAAAAAAAAACAAkAAQAAAAAAAAADAAkAAQAAAAAAAAAEAAYAAQAAAAAAAAADAAUAAQAAAAAAAAAEAAQAAQAAAAAAAAAEAAMAAQAAAAAAAAAEAAIAAQAAAAAAAAAEAAEAAQAAAAAAAAAEAAAAAQAAAAAAAAAEAP//AQAAAAAAAAAEAP7/AQAAAAAAAAAEAP3/AQAAAAAAAAAEAPz/AQAAAAAAAAAEAPv/AQAAAAAAAAAEAPr/AQAAAAAAAAAEAPn/AQAAAAAAAAAEAPj/AQAAAAAAAAAEAPf/AQAAAAAAAAAEAPb/AQAAAAAAAAAEAPX/AQAAAAAAAAAEAPT/AQAAAAAAAAADAPX/AQAAAAAAAAADAPT/AQAAAAAAAAACAPX/AQAAAAAAAAACAPb/AQAAAAAAAAABAPb/AQAAAAAAAAAAAPf/AQAAAAAAAAD///f/AQAAAAAAAAD///b/AQAAAAAAAAD///X/AQAAAAAAAAAAAPT/AQAAAAAAAAD///T/AQAAAAAAAAAAAPb/AQAAAAAAAAAAAPX/AQAAAAAAAAABAPf/AQAAAAAAAAADAPb/AQAAAAAAAAABAPX/AQAAAAAAAAACAPT/AQAAAAAAAAABAPT/AQAAAAAAAAABAPj/AQAAAAAAAAAAAPn/AQAAAAAAAAABAPr/AQAAAAAAAAAAAPj/AQAAAAAAAAACAPr/AQAAAAAAAAABAPn/AQAAAAAAAAABAPv/AQAAAAAAAAACAPj/AQAAAAAAAAACAPn/AQAAAAAAAAADAPr/AQAAAAAAAAADAPn/AQAAAAAAAAADAPf/AQAAAAAAAAADAPj/AQAAAAAAAAACAPv/AQAAAAAAAAACAPz/AQAAAAAAAAACAP3/AQAAAAAAAAADAP7/AQAAAAAAAAADAP3/AQAAAAAAAAADAPz/AQAAAAAAAAADAPv/AQAAAAAAAAADAP//AQAAAAAAAAACAAMAAQAAAAAAAAADAAIAAQAAAAAAAAADAAEAAQAAAAAAAAADAAMAAQAAAAAAAAADAAQAAQAAAAAAAAADAAYAAQAAAAAAAAACAAUAAQAAAAAAAAACAAQAAQAAAAAAAAABAAUAAQAAAAAAAAABAAYAAQAAAAAAAAAAAAcAAQAAAAAAAAABAAcAAQAAAAAAAAACAAYAAQAAAAAAAAACAPf/AQAAAAAAAAAEAAUAAQAAAAAAAAAEAAcAAQAAAAAAAAAEAAgAAQAAAAAAAAAEAAkAAQAAAAAAAAADAAoAAQAAAAAAAAAEAAoAAQAAAAAAAAACAAoAAQAAAAAAAAABAAoAAQAAAAAAAAD+/wsAAQAAAAAAAAD9/wsAAQAAAAAAAAD9/woAAQAAAAAAAAD8/wsAAQAAAAAAAAD7/wsAAQAAAAAAAAD+/wAAAQAAAAAAAAD+/wEAAQAAAAAAAAD//wAAAQAAAAAAAAD//wEAAQAAAAAAAAD//wUAAQAAAAAAAAD+/wQAAQAAAAAAAAAFAAgAAQAAAAAAAAAFAAYAAQAAAAAAAAAFAAUAAQAAAAAAAAAFAAQAAQAAAAAAAAAFAAIAAQAAAAAAAAAFAAEAAQAAAAAAAAAFAAAAAQAAAAAAAAAFAP7/AQAAAAAAAAAFAPz/AQAAAAAAAAAFAPr/AQAAAAAAAAAFAPn/AQAAAAAAAAAFAPj/AQAAAAAAAAAFAPb/AQAAAAAAAAAFAPT/AQAAAAAAAAAEAPP/AQAAAAAAAAAFAPL/AQAAAAAAAAAEAPL/AQAAAAAAAAADAPP/AQAAAAAAAAADAPL/AQAAAAAAAAACAPP/AQAAAAAAAAACAPL/AQAAAAAAAAABAPP/AQAAAAAAAAABAPL/AQAAAAAAAAAAAPP/AQAAAAAAAAAAAPL/AQAAAAAAAAD///P/AQAAAAAAAAD+//P/AQAAAAAAAAD+//L/AQAAAAAAAAD9//L/AQAAAAAAAAD8//L/AQAAAAAAAAD7//P/AQAAAAAAAAD7//L/AQAAAAAAAAD6//P/AQAAAAAAAAD8//P/AQAAAAAAAAD//wsAAQAAAAAAAAAAAAwAAQAAAAAAAAAAAAsAAQAAAAAAAAABAAwAAQAAAAAAAAABAAsAAQAAAAAAAAACAAwAAQAAAAAAAAACAAsAAQAAAAAAAAADAAsAAQAAAAAAAAAEAAsAAQAAAAAAAAADAAwAAQAAAAAAAAD//w0AAQAAAAAAAAD//wwAAQAAAAAAAAD+/wwAAQAAAAAAAAD9/wwAAQAAAAAAAAD8/wwAAQAAAAAAAAD6/wsAAQAAAAAAAAAAAPz/AQAAAAAAAAAAAP3/AQAAAAAAAAAAAP7/AQAAAAAAAAD/////AQAAAAAAAAA=")
 tile_set = SubResource("TileSet_2hh7m")
 
-[node name="Jogador" type="CharacterBody2D" parent="." unique_id=1810874843]
+[node name="Jogador" type="CharacterBody2D" parent="." unique_id=1810874843 groups=["jogador"]]
 collision_mask = 3
 motion_mode = 1
 script = ExtResource("3_otwa2")
@@ -366,6 +451,8 @@ shape = SubResource("SegmentShape2D_aou4a")
 
 [node name="raycast_interacao" type="RayCast2D" parent="Jogador" unique_id=1840093085]
 target_position = Vector2(0, 30)
+collision_mask = 6
+hit_from_inside = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Jogador" unique_id=728798810]
 libraries/ = SubResource("AnimationLibrary_pij3u")
@@ -374,8 +461,8 @@ libraries/ = SubResource("AnimationLibrary_pij3u")
 
 [node name="CaixaObjeto" type="CharacterBody2D" parent="." unique_id=2009068382 groups=["subivel"]]
 y_sort_enabled = true
-position = Vector2(-126, 103)
-collision_layer = 3
+position = Vector2(-146, -91)
+collision_layer = 6
 motion_mode = 1
 script = ExtResource("4_5ckkb")
 
@@ -393,3 +480,164 @@ polygon = PackedVector2Array(41, 2, 41, 11, -6, 35, -22, 27, -39, 19, -39, 4, 12
 
 [node name="PontoTopo" type="Marker2D" parent="CaixaObjeto" unique_id=757139547]
 position = Vector2(-37, -24)
+
+[node name="Porta" type="StaticBody2D" parent="." unique_id=614198896 groups=["interativo"]]
+position = Vector2(-78, -147)
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("8_pfhxm")
+esta_trancada = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Porta" unique_id=1721797181]
+y_sort_enabled = true
+position = Vector2(50, -55)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("8_t8jxu")
+offset = Vector2(0, 10)
+hframes = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Porta" unique_id=571409338]
+libraries/ = SubResource("AnimationLibrary_0crsg")
+
+[node name="ColisaoInteracao" type="CollisionShape2D" parent="Porta" unique_id=394493348]
+position = Vector2(46.875, -19)
+shape = SubResource("RectangleShape2D_pfhxm")
+
+[node name="CorpoFisico" type="StaticBody2D" parent="Porta" unique_id=1816705120]
+collision_layer = 2
+collision_mask = 0
+
+[node name="ColisaoFisica" type="CollisionShape2D" parent="Porta/CorpoFisico" unique_id=517797869]
+position = Vector2(47, -11)
+shape = SubResource("RectangleShape2D_t8jxu")
+
+[node name="PlacaPressao" type="Area2D" parent="." unique_id=1922478007 node_paths=PackedStringArray("porta_alvo")]
+position = Vector2(-274, -92)
+collision_layer = 2
+collision_mask = 6
+script = ExtResource("10_pij3u")
+porta_alvo = NodePath("../Porta")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlacaPressao" unique_id=238796759]
+position = Vector2(0, 6)
+shape = SubResource("RectangleShape2D_pij3u")
+
+[node name="ItemColetavel" type="StaticBody2D" parent="." unique_id=27554351 groups=["interativo"]]
+position = Vector2(205.99998, -38)
+scale = Vector2(0.07, 0.07)
+collision_layer = 4
+script = ExtResource("11_0oi55")
+dados = ExtResource("12_0crsg")
+
+[node name="Sprite2D" type="Sprite2D" parent="ItemColetavel" unique_id=869358629]
+texture = ExtResource("12_57gmc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ItemColetavel" unique_id=250920024]
+position = Vector2(16.8667, -19.971802)
+rotation = -0.61610126
+shape = SubResource("RectangleShape2D_0crsg")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1979154555]
+script = ExtResource("14_5g5eo")
+
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=74029486]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control" unique_id=554492173]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_qobow")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Control/PanelContainer" unique_id=788233402]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CanvasLayer/Control/PanelContainer/VBoxContainer" unique_id=1608197894]
+layout_mode = 2
+text = "Inventario"
+label_settings = SubResource("LabelSettings_5g5eo")
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer" unique_id=1024474514]
+layout_mode = 2
+columns = 3
+
+[node name="PanelContainer3" type="PanelContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer" unique_id=205842688]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Slot" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer3" unique_id=78289835 instance=ExtResource("15_lwdvv")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icone" type="TextureRect" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer3" unique_id=1849226484]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer" unique_id=2011204539]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Slot" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer" unique_id=1645946167 instance=ExtResource("15_lwdvv")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icone" type="TextureRect" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer" unique_id=299344304]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PanelContainer2" type="PanelContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer" unique_id=358823369]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Slot" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer2" unique_id=239918598 instance=ExtResource("15_lwdvv")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icone" type="TextureRect" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer2" unique_id=1430790186]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PanelContainer4" type="PanelContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer" unique_id=504527342]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Slot" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer4" unique_id=92755920 instance=ExtResource("15_lwdvv")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icone" type="TextureRect" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer4" unique_id=1851282524]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PanelContainer5" type="PanelContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer" unique_id=1874393965]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Slot" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer5" unique_id=120122869 instance=ExtResource("15_lwdvv")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icone" type="TextureRect" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer5" unique_id=883688033]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PanelContainer6" type="PanelContainer" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer" unique_id=894795885]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Slot" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer6" unique_id=1834347595 instance=ExtResource("15_lwdvv")]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+
+[node name="Icone" type="TextureRect" parent="CanvasLayer/Control/PanelContainer/VBoxContainer/GridContainer/PanelContainer6" unique_id=11571448]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
