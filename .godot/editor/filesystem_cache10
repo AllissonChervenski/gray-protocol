@@ -1,5 +1,5 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1780301263
+::res://::1780302013
 ::res://Cenarios/::1780220491
 mundo.tscn::PackedScene::8805259297842985682::1780220491::0::1::::<><><>0<>0<><>::uid://dhojkddms4k1b::::res://Interativos/Sem título.png
 ::res://Interativos/::1780220444
@@ -31,5 +31,6 @@ boneco.png::CompressedTexture2D::3305025218967562385::1780216428::1780220064::1:
 Gemini_Generated_Image_fpiyiyfpiyiyfpiy-removebg-preview.png::CompressedTexture2D::9084474738606920732::1780216428::1780220062::1::::<><><>0<>0<>519f93f7d0637346f3e8f9b245504e2d<>res://.godot/imported/Gemini_Generated_Image_fpiyiyfpiyiyfpiy-removebg-preview.png-3a555ed01d819689d8cbe9e5b623a87b.ctex::
 jogador.gd::GDScript::8900579947871704798::1780220726::0::1::::<>CharacterBody2D<><>0<>0<><>::
 jogador.tscn::PackedScene::7140890290184599006::1780220726::0::1::::<><><>0<>0<><>::uid://dy2ristcv6ch7::::res://Personagens/jogador.gd<>uid://b71fkfu7kbfml::::res://Personagens/sprite_sheet_down.png<>uid://bnc8jus3o287v::::res://Personagens/boneco.png<>uid://8vkh4swahj06::::res://Personagens/sprite_sheet_down-removebg-preview.png
+inimigo.tscn::PackedScene::6623494260630161481::1780302123::0::1::::<><><>0<>0<><>::
 sprite_sheet_down-removebg-preview.png::CompressedTexture2D::2360204995358822285::1780216428::1780220062::1::::<><><>0<>0<>305fb6d4bf4e5be1729d97a50a841912<>res://.godot/imported/sprite_sheet_down-removebg-preview.png-e1b32b7afca66c49e991d2ffcc3c410c.ctex::
 sprite_sheet_down.png::CompressedTexture2D::4686459239598754271::1780216428::1780220062::1::::<><><>0<>0<>41006369b1120bf15e27baadb574ef89<>res://.godot/imported/sprite_sheet_down.png-ee904c5ba27fe8db693736e000fb114a.ctex::

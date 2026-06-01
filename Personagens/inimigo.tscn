@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://c1mp8ocyg2bef"]
+
+[ext_resource type="Script" uid="uid://b6pmtalwj1dqm" path="res://Personagens/inimigo.gd" id="1_2jf70"]
+[ext_resource type="Texture2D" uid="uid://b5g50pe6ugphu" path="res://Itens/icon.svg" id="2_kjlyr"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kjlyr"]
+size = Vector2(31, 75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jfx6r"]
+size = Vector2(46.5, 95.5)
+
+[node name="Inimigo" type="CharacterBody2D" unique_id=1889121411]
+collision_layer = 8
+collision_mask = 3
+script = ExtResource("1_2jf70")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=253930534]
+position = Vector2(0.5, 3.75)
+scale = Vector2(0.25781262, 0.68359375)
+texture = ExtResource("2_kjlyr")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=729029578 groups=["inimigo"]]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_kjlyr")
+
+[node name="AreaAtaque" type="Area2D" parent="." unique_id=1763692053]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaAtaque" unique_id=123531536]
+position = Vector2(1, 3)
+shape = SubResource("RectangleShape2D_jfx6r")

@@ -1,0 +1,5 @@
+res://Personagens/jogador.tscn
+res://Personagens/inimigo.gd
+res://Personagens/inimigo.tscn
+res://Personagens/jogador.gd
+res://Cenarios/mundo.tscn
