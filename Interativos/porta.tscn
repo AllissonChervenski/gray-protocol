@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://dsm1pgn13bvgv"]
+
+[ext_resource type="Script" uid="uid://bakijnu6s22e8" path="res://Interativos/porta.gd" id="1_setqv"]
+[ext_resource type="Texture2D" uid="uid://duyitehrssq4a" path="res://Interativos/door-removebg-preview.png" id="2_syx3q"]
+
+[sub_resource type="Animation" id="Animation_0oi55"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_57gmc"]
+resource_name = "abrir"
+length = 0.26666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_0crsg"]
+resource_name = "fechar"
+length = 0.26666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0crsg"]
+_data = {
+&"RESET": SubResource("Animation_0oi55"),
+&"abrir": SubResource("Animation_57gmc"),
+&"fechar": SubResource("Animation_0crsg")
+}
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pfhxm"]
+size = Vector2(74.25, 55)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_t8jxu"]
+size = Vector2(66, 26)
+
+[node name="Porta" type="StaticBody2D" unique_id=438833726 groups=["interativo"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_setqv")
+esta_trancada = true
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1043809812]
+y_sort_enabled = true
+position = Vector2(50, -55)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_syx3q")
+offset = Vector2(0, 10)
+hframes = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1490091183]
+libraries/ = SubResource("AnimationLibrary_0crsg")
+
+[node name="ColisaoInteracao" type="CollisionShape2D" parent="." unique_id=2094354901]
+position = Vector2(46.875, -19)
+shape = SubResource("RectangleShape2D_pfhxm")
+
+[node name="CorpoFisico" type="StaticBody2D" parent="." unique_id=204398419]
+collision_layer = 2
+collision_mask = 0
+
+[node name="ColisaoFisica" type="CollisionShape2D" parent="CorpoFisico" unique_id=1475612037]
+position = Vector2(47, -11)
+shape = SubResource("RectangleShape2D_t8jxu")
