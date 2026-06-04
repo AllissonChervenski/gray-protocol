@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dw382gi4atoeq"]
+
+[ext_resource type="Script" uid="uid://d4ebsme65pj05" path="res://teste.gd" id="1_o02vu"]
+
+[node name="Teste" type="Node2D" unique_id=1545995202]
+script = ExtResource("1_o02vu")
+
+[node name="GDLlama" type="GDLlama" parent="." unique_id=879492288]
+model_path = "Modelo/qwen2.5-0.5b-instruct-q4_0.gguf"
+instruct = true

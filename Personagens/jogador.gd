@@ -1,5 +1,5 @@
 extends CharacterBody2D
-
+class_name JogadorBase
 @export var acceleration = 800.0
 @export var friction = 1000.0
 @export var tempo_para_empurrar = 0.5
@@ -171,7 +171,7 @@ func tentar_descer():
 	if direcao_descida == Vector2.ZERO:
 		direcao_descida = Vector2(0, 1)
 
-	var ponto_chao = global_position + (direcao_descida * 40)
+	var ponto_chao = global_position + (direcao_descida * 40) 
 
 	var tween = create_tween()
 	tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)

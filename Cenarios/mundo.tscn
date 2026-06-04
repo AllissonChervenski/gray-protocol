@@ -1,8 +1,10 @@
 [gd_scene format=4 uid="uid://dxpllmkiyv0nm"]
 
 [ext_resource type="Texture2D" uid="uid://dhojkddms4k1b" path="res://Interativos/Sem título.png" id="1_expfn"]
+[ext_resource type="Script" uid="uid://b7xper5lhfy2k" path="res://Cenarios/mundo.gd" id="1_q1err"]
 [ext_resource type="PackedScene" uid="uid://c80dojjec18ms" path="res://Personagens/jogador.tscn" id="2_ajst4"]
 [ext_resource type="PackedScene" uid="uid://c1mp8ocyg2bef" path="res://Personagens/inimigo.tscn" id="3_p4k87"]
+[ext_resource type="PackedScene" uid="uid://jr42umu2elju" path="res://oraculo.tscn" id="4_p4k87"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ckkb"]
 texture = ExtResource("1_expfn")
@@ -21,9 +23,10 @@ tile_shape = 1
 tile_size = Vector2i(64, 32)
 sources/1 = SubResource("TileSetAtlasSource_5ckkb")
 
-[node name="Mundo" type="Node2D" unique_id=1712903663]
+[node name="Mundo" type="Node2D" unique_id=1712903663 groups=["mapa"]]
 y_sort_enabled = true
 position = Vector2(351, 191)
+script = ExtResource("1_q1err")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=833315343]
 visibility_layer = 2
@@ -33,7 +36,9 @@ tile_map_data = PackedByteArray("AAD+////AQAAAAAAAAD///7/AQAAAAAAAAD///3/AQAAAAA
 tile_set = SubResource("TileSet_2hh7m")
 
 [node name="Jogador" parent="." unique_id=628331959 instance=ExtResource("2_ajst4")]
-position = Vector2(-5, -6)
+position = Vector2(6, -36)
 
-[node name="Inimigo" parent="." unique_id=1889121411 instance=ExtResource("3_p4k87")]
+[node name="Inimigo" parent="." unique_id=1889121411 groups=["inimigo"] instance=ExtResource("3_p4k87")]
 position = Vector2(209, 154)
+
+[node name="Oraculo" parent="." unique_id=483273147 groups=["oraculo"] instance=ExtResource("4_p4k87")]

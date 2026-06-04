@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://jr42umu2elju"]
+
+[ext_resource type="Script" uid="uid://s422wn1bitdc" path="res://oraculo.gd" id="1_60ipu"]
+
+[node name="Oraculo" type="Node" unique_id=483273147]
+script = ExtResource("1_60ipu")
+
+[node name="UI_Oraculo" type="CanvasLayer" parent="." unique_id=1414883265]
+
+[node name="FundoPreto" type="Panel" parent="UI_Oraculo" unique_id=928928625]
+anchors_preset = -1
+anchor_right = 0.4109375
+anchor_bottom = 0.036111113
+offset_right = 110.0
+offset_bottom = 24.0
+metadata/_edit_use_anchors_ = true
+
+[node name="TextoDisplay" type="Label" parent="UI_Oraculo/FundoPreto" unique_id=1027438212]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.89008045
+anchor_bottom = 0.35135135
+offset_right = 40.0
+offset_bottom = 23.0
+autowrap_mode = 1
+visible_characters = 0
+visible_ratio = 0.765
+metadata/_edit_use_anchors_ = true
+
+[node name="SomDigitacao" type="AudioStreamPlayer" parent="UI_Oraculo" unique_id=1673569363]
