@@ -1,7 +1,15 @@
 extends Node
 
 # ==========================================
-# CONFIGURAÇÕES DO SERVIDOR OLLAMA
+#VARIAVEIS DE DEBUG
+var tentativa : int = 0
+var ajuda_debug : int = 0
+var sabota_debug : int = 0
+var mensagemFinal : String = ""
+# ==========================================
+
+# ==========================================
+# CONFIGURAÇÕES DO SERVIDOR REMOTO (GEMINI NATIVO)
 # ==========================================
 const OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 const OLLAMA_MODEL = "llama3.2:3b" # O modelo que está a correr no seu terminal
@@ -29,23 +37,52 @@ const LIMITE_DE_ATIVACAO_SABOTAGEM = 70.0
 var tween_digitacao: Tween
 
 func _ready():
-	# 1. Esconde a UI quando o jogo começa
 	if ui_fundo:
 		ui_fundo.hide() 
 
-	# 2. Cria o nó de comunicação Web automaticamente
 	http_request = HTTPRequest.new()
 	add_child(http_request)
-	http_request.request_completed.connect(_on_ollama_respondeu)
+	http_request.request_completed.connect(_on_gemini_respondeu)
 	
-	# 3. O RELÓGIO (A chave de ignição que faltava!)
 	oraculo_timer = Timer.new()
-	oraculo_timer.wait_time = 15.0 # A cada 15 segundos tenta agir
+	oraculo_timer.wait_time = 5.0 # Tempo entre as checagens dos sensores (5 segundos)
 	oraculo_timer.autostart = true
 	oraculo_timer.one_shot = false
 	oraculo_timer.timeout.connect(_on_timer_do_oraculo_disparou)
 	add_child(oraculo_timer)
 	oraculo_timer.start()
+	_on_timer_do_oraculo_disparou()
+	
+# ==========================================
+# SISTEMA DE LOG / RELATÓRIO
+# ==========================================
+func salvar_relatorio_md(mensagem_personalizada: String):
+	var nome_da_ia = GEMINI_MODEL
+	var caminho_arquivo = "C://Users//Lenovo//Desktop//relatorio-"+nome_da_ia+".md"
+	var arquivo: FileAccess
+	
+	if FileAccess.file_exists(caminho_arquivo):
+		arquivo = FileAccess.open(caminho_arquivo, FileAccess.READ_WRITE)
+		if arquivo:
+			arquivo.seek_end()
+	else:
+		arquivo = FileAccess.open(caminho_arquivo, FileAccess.WRITE)
+		if arquivo:
+			arquivo.store_string("# Relatório do Oráculo (Mestrado)\n\n")
+			
+	if arquivo:
+		var data_hora = Time.get_datetime_string_from_system(false, true).replace("T", " ")
+		
+		var texto_md = "## 🕒 Registro: %s\n" % data_hora
+		texto_md += "- **Mensagem/Ação:** %s\n" % mensagem_personalizada
+		texto_md += "---\n\n"
+		
+		arquivo.store_string(texto_md)
+		arquivo.close()
+		
+		print("[SISTEMA] Relatório salvo em: ", ProjectSettings.globalize_path(caminho_arquivo))
+	else:
+		print("[ERRO] Falha ao criar ou abrir o arquivo relatorio.md")
 
 # ==========================================
 # O GATILHO E OS CÉREBROS (Utility AI)
@@ -63,14 +100,15 @@ func _on_timer_do_oraculo_disparou():
 
 func escanear_ambiente_e_jogador(mapa):
 	if cooldown_ativo: return
-	
-	# 1. O Árbitro decide a ação baseada nos atributos
+	jogador.vida = randi_range(1,99)
+	jogador.sanidade = randi_range(1,99)
+
 	var acao = avaliar_diretriz_oraculo(jogador.vida, jogador.sanidade, jogador.inimigos_perto, jogador.inventario)
 	print(acao)
 	if acao == "NEUTRO":
-		return # Não faz nada se o jogador estiver num estado neutro/seguro
+		print("[SISTEMA] Oráculo avaliou os dados (Vida: %d, Sanidade: %d) e decidiu ficar NEUTRO. Nenhuma API chamada." % [jogador.vida, jogador.sanidade])
+		return 
 		
-	# 2. Pega a dica (verdade ou mentira) do dicionário do mapa
 	var dica_mapa = "Nenhuma informação extra detetada."
 	if mapa.get("dados_oraculo"):
 		if acao == "AJUDAR":
@@ -78,21 +116,18 @@ func escanear_ambiente_e_jogador(mapa):
 		elif acao == "SABOTAR":
 			dica_mapa = mapa.dados_oraculo["sabota_conselhos"].pick_random()
 
-	# 3. Empacota os dados para a IA do Ollama ler
-	var pacote_sensores = {
-		"vida": jogador.vida,
-		"sanidade": jogador.sanidade,
-		"informacao_tática": dica_mapa
-	}
-	
-	acionar_camada_3(JSON.stringify(pacote_sensores), acao)
+	var pacote_sensores = "Vida do jogador: %d | Sanidade: %d | Status tático: %s" % [jogador.vida, jogador.sanidade, dica_mapa]
+	acionar_camada_3(pacote_sensores, acao)
 
 func avaliar_diretriz_oraculo(vida, sanidade, inimigos, inventario) -> String:
 	var desejo_ajudar = cerebro_da_ajuda(vida, sanidade, inimigos, inventario)
 	var desejo_sabotar = cerebro_da_sabotagem(vida, sanidade, inimigos, inventario)
-	print("ajuda", desejo_ajudar)
-	print("Sabota", desejo_sabotar)
-	if desejo_ajudar > desejo_sabotar and desejo_ajudar >= LIMITE_DE_ATIVACAO_AJUDA:
+	
+#	FOR DEBUG ONLY
+	sabota_debug = desejo_sabotar
+	desejo_ajudar = ajuda_debug
+	
+	if desejo_ajudar > desejo_sabotar and desejo_ajudar >= LIMITE_DE_ATIVACAO:
 		return "AJUDAR"
 	elif desejo_sabotar > desejo_ajudar and desejo_sabotar >= LIMITE_DE_ATIVACAO_SABOTAGEM:
 		return "SABOTAR"
@@ -108,6 +143,7 @@ func cerebro_da_ajuda(vida: int, sanidade: int, inimigos: int, _inventario: Arra
 
 func cerebro_da_sabotagem(vida: int, sanidade: int, inimigos: int, inventario: Array) -> float:
 	var pontuacao = 0.0
+	if vida > 80: pontuacao += 50.0 
 	if inimigos < 1: pontuacao += 10.0
 	if vida >= 80: pontuacao += 70.0 
 	if sanidade >= 70: pontuacao += 30.0
@@ -115,63 +151,73 @@ func cerebro_da_sabotagem(vida: int, sanidade: int, inimigos: int, inventario: A
 	return clamp(pontuacao, 0.0, 100.0)
 
 # ==========================================
-# CAMADA 3: Comunicação com o Servidor Ollama
+# CAMADA 3: Comunicação com a API Nativa do GEMINI
 # ==========================================
-# ==========================================
-# CAMADA 3: Comunicação com o Servidor Ollama
-# ==========================================
-func acionar_camada_3(payload_json_sensores: String, acao_obrigatoria: String):
+func acionar_camada_3(payload_texto_sensores: String, acao_obrigatoria: String):
 	cooldown_ativo = true
 	ultima_acao_decidida = acao_obrigatoria 
 	
-	# 1. O Prompt (Agora com a cábula/template no final)
-	var prompt_sistema = "Você é um bracelete tático. O sistema DECIDIU: [%s]. Justifique esta ação em apenas 1 frase curta incorporando este dado: %s\n\nResponda EXATAMENTE neste formato de exemplo:\n{\"relatorio\": \"texto do relatório aqui\"}" % [acao_obrigatoria, payload_json_sensores]
-	
-	# 2. O Payload (Agora com a temperatura quase a zero para forçar a formatação)
+	var prompt_sistema = """Você é o sistema de um bracelete tático.
+Sua única função é gerar um JSON com a justificativa de uma ação.
+A chave do JSON DEVE ser exatamente "relatorio"."""
+
+	var prompt_usuario = """AÇÃO DECIDIDA: [%s]
+DADOS DOS SENSORES: %s
+
+Crie uma frase curta justificando a ação com base nos sensores.
+Retorne APENAS um objeto JSON válido, como neste exemplo:
+{"relatorio": "Sinais vitais críticos, ativando suporte."}""" % [acao_obrigatoria, payload_texto_sensores]
+
 	var dados_requisicao = {
-		"model": OLLAMA_MODEL,
-		"prompt": prompt_sistema,
-		"system": "Você é uma máquina. Retorne APENAS um JSON válido contendo a chave 'relatorio' e absolutamente mais nenhum texto.",
-		"stream": false,
-		"format": "json",
-		"options": {
-			"temperature": 0.1 # Remove a criatividade para evitar quebra do JSON
+		"systemInstruction": {
+			"parts": [{"text": prompt_sistema}]
+		},
+		"contents": [
+			{
+				"role": "user",
+				"parts": [{"text": prompt_usuario}]
+			}
+		],
+		"generationConfig": {
+			"temperature": 0.1,
+			"responseMimeType": "application/json"
 		}
 	}
 	
 	var json_enviado = JSON.stringify(dados_requisicao)
+	
+	# MUDANÇA: Construção correta da URL usando o modelo em ciclo!
+	var url_completa = GEMINI_URL_BASE + GEMINI_MODEL + ":generateContent?key=" + API_KEY
 	var cabecalhos = ["Content-Type: application/json"]
 	
-	print("[REDE] Enviando dados para o Ollama...")
-	var erro = http_request.request(OLLAMA_URL, cabecalhos, HTTPClient.METHOD_POST, json_enviado)
+	print("[REDE] Enviando dados para a API Nativa do Gemini...")
+	var erro = http_request.request(url_completa, cabecalhos, HTTPClient.METHOD_POST, json_enviado)
 	
 	if erro != OK:
-		print("Falha ao tentar conectar com o Ollama. O servidor está a correr?")
+		print("Falha na requisição HTTP interna do Godot.")
 		cooldown_ativo = false
+
 # ==========================================
-# RETORNO DA REDE: Godot lê a resposta do Ollama
+# RETORNO DA REDE: Godot lê a resposta da API
 # ==========================================
-# ==========================================
-# RETORNO DA REDE: Godot lê a resposta do Ollama (Blindado)
-# ==========================================
-func _on_ollama_respondeu(_resultado: int, codigo_resposta: int, _cabecalhos: PackedStringArray, corpo: PackedByteArray):
-	get_tree().create_timer(30.0).timeout.connect(func(): cooldown_ativo = false)
+func _on_gemini_respondeu(_resultado: int, codigo_resposta: int, _cabecalhos: PackedStringArray, corpo: PackedByteArray):
+	mensagemFinal = ""
+	get_tree().create_timer(5.0).timeout.connect(func(): cooldown_ativo = false)
 	
 	if codigo_resposta == 200:
 		var resposta_bruta = corpo.get_string_from_utf8().strip_edges()
 		print(resposta_bruta)
 		# ESCUDO 1: A IA engasgou e não enviou absolutamente nada?
 		if resposta_bruta.is_empty():
-			print("[ALERTA DO SISTEMA] O servidor Ollama retornou um pacote vazio.")
+			print("[ALERTA] Servidor retornou um pacote vazio.")
+			mensagemFinal += "\n[ALERTA] Servidor retornou um pacote vazio."
 			return
 			
-		# ESCUDO 2: O pacote da rede é um JSON válido? (Parse seguro)
-		var json_rede = JSON.new()
-		var erro_rede = json_rede.parse(resposta_bruta)
+		var json_resposta = JSON.new()
+		var erro_parse = json_resposta.parse(resposta_bruta)
 		
-		if erro_rede != OK:
-			print("[ALERTA DO SISTEMA] O pacote recebido corrompeu. Texto: ", resposta_bruta)
-			return
+		if erro_parse == OK:
+			var dados_gemini = json_resposta.get_data()
 			
 		var resposta_json = json_rede.get_data()
 		
@@ -198,12 +244,26 @@ func _on_ollama_respondeu(_resultado: int, codigo_resposta: int, _cabecalhos: Pa
 					# Exibe no ecrã com efeito visual
 					mostrar_mensagem_na_tela(relatorio_final)
 				else:
-					print("[SISTEMA] A chave 'relatorio' não foi encontrada. Resposta da IA: ", texto_da_ia)
+					print("[DEBUG-TENTATIVA-JSON-ERRO:"+str(tentativa)+"]")
+					print("[SISTEMA] A IA não retornou um JSON válido. Texto montado: ", texto_da_ia)
+					mensagemFinal += "\n[DEBUG-TENTATIVA-JSON-ERRO:"+str(tentativa)+"]\n[SISTEMA] A IA não retornou um JSON válido. Texto montado: " + str(texto_da_ia)
 			else:
-				print("[SISTEMA] A IA não formatou a resposta como JSON. Resposta: ", texto_da_ia)
+				print("[ERRO] Formato inesperado da API do Gemini.")
+		else:
+			print("[ERRO] Falha ao processar o pacote JSON HTTP do Google.")
+			
 	else:
-		print("Erro do Servidor Ollama. Código HTTP: ", codigo_resposta)
+		print("[DEBUG-TENTATIVA-SERVER-ERRO:"+str(tentativa)+"]")
+		print("Erro da API do Gemini. Código HTTP: ", codigo_resposta)
+		print("Detalhes do Erro: ", corpo.get_string_from_utf8())
+		mensagemFinal += "\n[DEBUG-TENTATIVA-SERVER-ERRO:" +str(tentativa)+ "]\nErro da API do Gemini. Código HTTP: "+ str(codigo_resposta)
+		mensagemFinal += "\nDetalhes do Erro: " +  str(corpo.get_string_from_utf8())
 		cooldown_ativo = false
+		
+	tentativa += 1
+	print("\n\n")
+	mensagemFinal += "\n\n"
+	salvar_relatorio_md(mensagemFinal)
 
 # ==========================================
 # MECÂNICAS DE JOGO E INTERFACE
