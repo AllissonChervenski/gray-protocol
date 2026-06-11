@@ -5,6 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://c80dojjec18ms" path="res://Personagens/jogador.tscn" id="2_ajst4"]
 [ext_resource type="PackedScene" uid="uid://c1mp8ocyg2bef" path="res://Personagens/inimigo.tscn" id="3_p4k87"]
 [ext_resource type="PackedScene" uid="uid://jr42umu2elju" path="res://oraculo.tscn" id="4_p4k87"]
+[ext_resource type="PackedScene" uid="uid://5tmjna8mlawu" path="res://Itens/chave.tscn" id="6_pttki"]
+[ext_resource type="PackedScene" uid="uid://dsm1pgn13bvgv" path="res://Interativos/porta.tscn" id="7_0ce3k"]
+[ext_resource type="PackedScene" uid="uid://df2usidlhrryj" path="res://Interativos/caixa_objeto.tscn" id="8_84oly"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ckkb"]
 texture = ExtResource("1_expfn")
@@ -42,3 +45,13 @@ position = Vector2(6, -36)
 position = Vector2(209, 154)
 
 [node name="Oraculo" parent="." unique_id=483273147 groups=["oraculo"] instance=ExtResource("4_p4k87")]
+
+[node name="ItemColetavel" parent="." unique_id=1645621321 instance=ExtResource("6_pttki")]
+position = Vector2(93, 125)
+scale = Vector2(0.2, 0.2)
+
+[node name="Porta" parent="." unique_id=438833726 instance=ExtResource("7_0ce3k")]
+position = Vector2(-240, 31)
+
+[node name="CaixaObjeto" parent="." unique_id=814051192 instance=ExtResource("8_84oly")]
+position = Vector2(-101, 95)

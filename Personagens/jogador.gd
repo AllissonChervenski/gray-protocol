@@ -10,10 +10,10 @@ class_name JogadorBase
 # STATUS DO JOGADOR
 # ==========================================
 @export var vida_maxima: int = 100
-var vida: int = vida_maxima
+@export var vida: int = vida_maxima
 
 @export var sanidade_maxima: int = 100
-var sanidade: int = sanidade_maxima
+@export var sanidade: int = sanidade_maxima
 
 # ==========================================
 # MOVIMENTAÇÃO E FUGA

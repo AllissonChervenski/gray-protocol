@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://jr42umu2elju"]
 
-[ext_resource type="Script" uid="uid://s422wn1bitdc" path="res://oraculo.gd" id="1_60ipu"]
+[ext_resource type="Script" uid="uid://cn1uvu7h4o1q" path="res://oraculo_3.gd" id="1_60ipu"]
 
 [node name="Oraculo" type="Node" unique_id=483273147]
 script = ExtResource("1_60ipu")

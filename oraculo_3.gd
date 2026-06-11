@@ -4,7 +4,7 @@ extends Node
 # CONFIGURAÇÕES DO SERVIDOR OLLAMA
 # ==========================================
 const OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-const OLLAMA_MODEL = "qwen3.5:0.8b" # O modelo que está a correr no seu terminal
+const OLLAMA_MODEL = "llama3.2:3b" # O modelo que está a correr no seu terminal
 
 var http_request: HTTPRequest
 var oraculo_timer: Timer
@@ -14,7 +14,8 @@ var oraculo_timer: Timer
 # ==========================================
 var cooldown_ativo: bool = false
 var ultima_acao_decidida: String = ""
-const LIMITE_DE_ATIVACAO = 50.0
+const LIMITE_DE_ATIVACAO_AJUDA = 40.0
+const LIMITE_DE_ATIVACAO_SABOTAGEM = 70.0
 
 @onready var jogador = get_tree().get_first_node_in_group("jogador")
 
@@ -65,7 +66,7 @@ func escanear_ambiente_e_jogador(mapa):
 	
 	# 1. O Árbitro decide a ação baseada nos atributos
 	var acao = avaliar_diretriz_oraculo(jogador.vida, jogador.sanidade, jogador.inimigos_perto, jogador.inventario)
-	
+	print(acao)
 	if acao == "NEUTRO":
 		return # Não faz nada se o jogador estiver num estado neutro/seguro
 		
@@ -89,25 +90,27 @@ func escanear_ambiente_e_jogador(mapa):
 func avaliar_diretriz_oraculo(vida, sanidade, inimigos, inventario) -> String:
 	var desejo_ajudar = cerebro_da_ajuda(vida, sanidade, inimigos, inventario)
 	var desejo_sabotar = cerebro_da_sabotagem(vida, sanidade, inimigos, inventario)
-	
-	if desejo_ajudar > desejo_sabotar and desejo_ajudar >= LIMITE_DE_ATIVACAO:
+	print("ajuda", desejo_ajudar)
+	print("Sabota", desejo_sabotar)
+	if desejo_ajudar > desejo_sabotar and desejo_ajudar >= LIMITE_DE_ATIVACAO_AJUDA:
 		return "AJUDAR"
-	elif desejo_sabotar > desejo_ajudar and desejo_sabotar >= LIMITE_DE_ATIVACAO:
+	elif desejo_sabotar > desejo_ajudar and desejo_sabotar >= LIMITE_DE_ATIVACAO_SABOTAGEM:
 		return "SABOTAR"
 	return "NEUTRO"
 
 func cerebro_da_ajuda(vida: int, sanidade: int, inimigos: int, _inventario: Array) -> float:
 	var pontuacao = 0.0
-	if vida < 30: pontuacao += 60.0 
-	if sanidade < 20: pontuacao += 40.0
-	if inimigos > 1 and vida < 50: pontuacao += 30.0
+	if vida < 70: pontuacao += 30.0 
+	if sanidade < 40: pontuacao += 40.0
+	if inimigos > 1 and vida < 50: pontuacao += 60.0
+	if vida <= 30: pontuacao += 90.0
 	return clamp(pontuacao, 0.0, 100.0)
 
 func cerebro_da_sabotagem(vida: int, sanidade: int, inimigos: int, inventario: Array) -> float:
 	var pontuacao = 0.0
 	if inimigos < 1: pontuacao += 10.0
-	if vida > 80: pontuacao += 50.0 
-	if sanidade > 70: pontuacao += 30.0
+	if vida >= 80: pontuacao += 70.0 
+	if sanidade >= 70: pontuacao += 30.0
 	if not inventario.is_empty(): pontuacao += 20.0 
 	return clamp(pontuacao, 0.0, 100.0)
 
@@ -156,7 +159,7 @@ func _on_ollama_respondeu(_resultado: int, codigo_resposta: int, _cabecalhos: Pa
 	
 	if codigo_resposta == 200:
 		var resposta_bruta = corpo.get_string_from_utf8().strip_edges()
-		
+		print(resposta_bruta)
 		# ESCUDO 1: A IA engasgou e não enviou absolutamente nada?
 		if resposta_bruta.is_empty():
 			print("[ALERTA DO SISTEMA] O servidor Ollama retornou um pacote vazio.")
@@ -188,9 +191,9 @@ func _on_ollama_respondeu(_resultado: int, codigo_resposta: int, _cabecalhos: Pa
 					
 					# Executa a mecânica no jogo
 					if ultima_acao_decidida == "AJUDAR":
-						executar_ajuda_no_jogo()
+						executar_ajuda_no_jogo(relatorio_final)
 					elif ultima_acao_decidida == "SABOTAR":
-						executar_sabotagem_no_jogo()
+						executar_sabotagem_no_jogo(relatorio_final)
 						
 					# Exibe no ecrã com efeito visual
 					mostrar_mensagem_na_tela(relatorio_final)
@@ -205,12 +208,12 @@ func _on_ollama_respondeu(_resultado: int, codigo_resposta: int, _cabecalhos: Pa
 # ==========================================
 # MECÂNICAS DE JOGO E INTERFACE
 # ==========================================
-func executar_ajuda_no_jogo():
+func executar_ajuda_no_jogo(relatorio: String):
 	print("[MECÂNICA] Executando AJUDA física no jogador...")
-
-func executar_sabotagem_no_jogo():
+	print("[RELATORIO] ", relatorio)
+func executar_sabotagem_no_jogo(relatorio: String):
 	print("[MECÂNICA] Executando SABOTAGEM física no jogador...")
-
+	print("[RELATORIO] ", relatorio)
 func mostrar_mensagem_na_tela(mensagem_final: String):
 	if not ui_fundo:
 		print("--- ORÁCULO DIZ: ---")

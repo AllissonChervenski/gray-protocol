@@ -225,6 +225,8 @@ _data = {
 collision_mask = 3
 motion_mode = 1
 script = ExtResource("1_qv8bx")
+vida = 70
+sanidade = 30
 
 [node name="SensorInimigos" type="Area2D" parent="." unique_id=1903017266]
 collision_layer = 0
