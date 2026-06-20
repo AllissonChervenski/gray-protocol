@@ -1,0 +1,44 @@
+[gd_scene load_steps=2 format=3 uid="uid://b7hudg7mestre0"]
+
+[ext_resource type="Script" path="res://UI/hud.gd" id="1_hud"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_hud")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 216.0
+offset_bottom = 116.0
+
+[node name="LabelVida" type="Label" parent="Control"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 20.0
+text = "Vida"
+
+[node name="BarraVida" type="ProgressBar" parent="Control"]
+layout_mode = 0
+offset_top = 24.0
+offset_right = 200.0
+offset_bottom = 44.0
+max_value = 100.0
+value = 100.0
+
+[node name="LabelSanidade" type="Label" parent="Control"]
+layout_mode = 0
+offset_top = 58.0
+offset_right = 120.0
+offset_bottom = 78.0
+text = "Sanidade"
+
+[node name="BarraSanidade" type="ProgressBar" parent="Control"]
+layout_mode = 0
+offset_top = 82.0
+offset_right = 200.0
+offset_bottom = 102.0
+max_value = 100.0
+value = 100.0

@@ -6,7 +6,6 @@ extends StaticBody2D
 var esta_aberta: bool = false
 @export var fechavel: bool = true
 @onready var animation_player = $AnimationPlayer
-@onready var collision = $CollisionShape2D
 @onready var colisao_fisica = $CorpoFisico/ColisaoFisica
 @onready var colisao_interacao = $ColisaoInteracao
 
@@ -34,6 +33,7 @@ func abrir_porta():
 		esta_aberta = true
 		#esta_trancada = false
 		animation_player.play("abrir")
+		AudioManager.sfx("porta_abrir")
 		# Desativamos a colisão para o jogador passar
 		colisao_fisica.set_deferred("disabled", true)
 
@@ -43,9 +43,9 @@ func fechar_porta():
 	if fechavel:
 		esta_aberta = false
 		animation_player.play("fechar")
+		AudioManager.sfx("porta_fechar")
 		# Reativamos a colisão
 		colisao_fisica.set_deferred("disabled", false)
 
 func tocar_som_trancado():
-	# Aqui você colocaria seu AudioStreamPlayer
-	pass
+	AudioManager.sfx("porta_trancada")

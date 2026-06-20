@@ -1,5 +1,11 @@
 extends CharacterBody2D
 class_name JogadorBase
+
+# Sinais para o HUD e a tela de Game Over reagirem às mudanças de status
+signal vida_mudou(atual, maximo)
+signal sanidade_mudou(atual, maximo)
+signal morreu
+
 @export var acceleration = 800.0
 @export var friction = 1000.0
 @export var tempo_para_empurrar = 0.5
@@ -23,6 +29,18 @@ class_name JogadorBase
 var speed: float = velocidade_caminhada
 var esta_correndo: bool = false
 
+# ==========================================
+# COMBATE CORPO A CORPO (golpe na direção em que o jogador olha)
+# ==========================================
+@export var dano_golpe: int = 20          # dano causado por golpe
+@export var alcance_golpe: float = 40.0   # distância máxima que o golpe alcança
+@export var cooldown_golpe: float = 0.4   # tempo (s) entre um golpe e outro
+var pode_atacar: bool = true
+
+# Invulnerabilidade temporária após tomar dano (i-frames), p/ não levar dano em sequência
+@export var tempo_invulneravel: float = 0.6
+var invulneravel: bool = false
+
 # ========================================
 # Variaveis do mundo
 # ========================================
@@ -40,12 +58,29 @@ var inventario: Array[ItemData] = []
 # Guarda a última direção para o idle ficar correto
 var ultima_direcao: String = "baixo"
 
+# Som de passos: toca um "passo" a cada intervalo enquanto anda
+@export var intervalo_passo: float = 0.35
+var tempo_passo: float = 0.0
+
+func _ready():
+	# Sincroniza o HUD com os valores iniciais de vida e sanidade
+	vida_mudou.emit(vida, vida_maxima)
+	sanidade_mudou.emit(sanidade, sanidade_maxima)
+
+
 func _physics_process(delta):
 	if Input.is_action_just_pressed("ui_accept"):
 		if esta_subindo:
 			tentar_descer()
 		else:
 			tentar_interagir()
+
+	# Ataque corpo a corpo (precisa ter a arma; não funciona em cima de uma caixa)
+	if Input.is_action_just_pressed("atacar") and pode_atacar and not esta_subindo:
+		if tem_item("arma"):
+			atacar()
+		else:
+			print("Você não tem uma arma para atacar.")
 
 	if esta_subindo:
 		return
@@ -56,9 +91,11 @@ func _physics_process(delta):
 		velocity = velocity.move_toward(input_direction * speed, acceleration * delta)
 		raycast_interacao.target_position = input_direction * 30
 		_atualizar_animacao_movimento(input_direction)
+		_processar_passos(delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 		animation_player.play("idle_" + ultima_direcao)
+		tempo_passo = 0.0
 
 	move_and_slide()
 	
@@ -131,6 +168,66 @@ func _atualizar_animacao_movimento(dir: Vector2):
 				animation_player.play("walk_down")
 
 
+# Toca o som de passos em intervalos enquanto o jogador anda (mais rápido correndo).
+func _processar_passos(delta: float):
+	var intervalo = intervalo_passo * (0.6 if esta_correndo else 1.0)
+	tempo_passo += delta
+	if tempo_passo >= intervalo:
+		tempo_passo = 0.0
+		AudioManager.sfx("passo")
+
+
+# ─── COMBATE ──────────────────────────────────────────────────────────────────
+
+# Converte a direção que o jogador está olhando (texto) para um vetor.
+func _direcao_para_vetor() -> Vector2:
+	match ultima_direcao:
+		"cima":     return Vector2.UP
+		"baixo":    return Vector2.DOWN
+		"esquerda": return Vector2.LEFT
+		"direita":  return Vector2.RIGHT
+		_:          return Vector2.DOWN
+
+# Golpeia inimigos que estejam à frente, dentro do alcance.
+func atacar():
+	pode_atacar = false
+	var direcao_golpe = _direcao_para_vetor()
+	print("Golpe! Direção: ", ultima_direcao)
+	_mostrar_golpe(direcao_golpe)
+	AudioManager.sfx("golpe")
+
+	for inimigo in get_tree().get_nodes_in_group("inimigo"):
+		# O grupo "inimigo" pode conter nós sem vida (ex.: o CollisionShape);
+		# só acerta quem souber tomar dano.
+		if not inimigo.has_method("tomar_dano"):
+			continue
+		var para_inimigo = global_position.direction_to(inimigo.global_position)
+		var distancia = global_position.distance_to(inimigo.global_position)
+		# (a) está dentro do alcance E (b) está no cone à frente do jogador
+		if distancia <= alcance_golpe and para_inimigo.dot(direcao_golpe) > 0.3:
+			inimigo.tomar_dano(dano_golpe)
+
+	# Cooldown: espera antes de poder atacar de novo
+	await get_tree().create_timer(cooldown_golpe).timeout
+	pode_atacar = true
+
+# Desenha um arco branco curto à frente, na direção do golpe, e o some rapidinho.
+func _mostrar_golpe(direcao: Vector2):
+	var arco = Line2D.new()
+	arco.width = 4.0
+	arco.default_color = Color(1, 1, 1, 0.9)
+	# Monta um pequeno arco (~90°) perpendicular à direção do golpe
+	var angulo_base = direcao.angle()
+	for i in range(7):
+		var t = lerp(-0.4, 0.4, i / 6.0)  # de -0.4 a +0.4 rad
+		arco.add_point(Vector2(alcance_golpe, 0).rotated(angulo_base + t))
+	add_child(arco)
+	# Some por transparência e depois se remove
+	var tween = create_tween()
+	tween.tween_property(arco, "modulate:a", 0.0, 0.15)
+	tween.tween_callback(arco.queue_free)
+
+
 # ─── INTERAÇÃO ────────────────────────────────────────────────────────────────
 
 func tentar_interagir():
@@ -189,6 +286,7 @@ func tentar_descer():
 func adicionar_item(item: ItemData):
 	inventario.append(item)
 	print("Item coletado: ", item.nome)
+	AudioManager.sfx("coleta")
 
 func remover_item(item: ItemData):
 	if item in inventario:
@@ -218,20 +316,42 @@ func get_item(target_nome: String) -> ItemData:
 # FUNÇÕES DE STATUS (Dano e Sanidade)
 # ==========================================
 func tomar_dano(quantidade: int):
+	# Durante a invulnerabilidade, ignora o dano
+	if invulneravel:
+		return
 	vida -= quantidade
-	print(quantidade)
-	# Aqui você pode chamar uma animação de piscar vermelho
+	if vida < 0:
+		vida = 0
+	print("Jogador tomou ", quantidade, " de dano. Vida: ", vida)
+	vida_mudou.emit(vida, vida_maxima)
+	AudioManager.sfx("dano_jogador")
+	_piscar_dano()
+	_ativar_invulnerabilidade()
 	if vida <= 0:
 		morrer()
 
+# Feedback visual: o jogador pisca em vermelho ao tomar dano
+func _piscar_dano():
+	modulate = Color(1, 0.3, 0.3)
+	var tween = create_tween()
+	tween.tween_property(self, "modulate", Color(1, 1, 1), 0.3)
+
+# Liga a invulnerabilidade por um curto período (i-frames)
+func _ativar_invulnerabilidade():
+	invulneravel = true
+	await get_tree().create_timer(tempo_invulneravel).timeout
+	invulneravel = false
+
 func perder_sanidade(quantidade: int):
 	sanidade -= quantidade
-	print("A sua mente fraqueja... Sanidade: ", sanidade)
 	if sanidade < 0: sanidade = 0
+	print("A sua mente fraqueja... Sanidade: ", sanidade)
+	sanidade_mudou.emit(sanidade, sanidade_maxima)
 
 func morrer():
 	print("Você morreu.")
-	# Lógica de Game Over
+	AudioManager.sfx("morte_jogador")
+	morreu.emit()  # A tela de Game Over escuta este sinal
 
 # ==========================================
 # SINAIS DO SENSOR DE INIMIGOS

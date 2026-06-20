@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Texture2D" uid="uid://cgli3nppe73qi" path="res://Itens/chave.png" id="1_icon"]
+[ext_resource type="Script" uid="uid://helcdtfahm0a" path="res://Itens/ItemData.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+nome = "Cano de Ferro"
+descricao = "Uma arma improvisada. Permite atacar inimigos."
+icone = ExtResource("1_icon")
+id_unico = "arma"
+usos = 999
+metadata/_custom_type_script = "uid://helcdtfahm0a"
