@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bcoletavelg7arm0"]
 
 [ext_resource type="Script" path="res://Itens/arma_pickup.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://cgli3nppe73qi" path="res://Itens/chave.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://dirxvs42lhip7" path="res://Itens/barra_ferro.png" id="2_tex"]
 [ext_resource type="Resource" path="res://Itens/arma.tres" id="3_dados"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
@@ -12,7 +12,7 @@ script = ExtResource("1_script")
 dados = ExtResource("3_dados")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.15, 0.15)
 texture = ExtResource("2_tex")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -41,6 +41,9 @@ var pode_atacar: bool = true
 @export var tempo_invulneravel: float = 0.6
 var invulneravel: bool = false
 
+# Trava a animação de andar/parado enquanto o golpe toca
+var atacando: bool = false
+
 # ========================================
 # Variaveis do mundo
 # ========================================
@@ -52,8 +55,7 @@ var esta_subindo: bool = false
 var inventario: Array[ItemData] = []
 
 @onready var raycast_interacao = $raycast_interacao
-@onready var sprite = $Sprite2D
-@onready var animation_player = $AnimationPlayer
+@onready var anim = $AnimatedSprite2D
 
 # Guarda a última direção para o idle ficar correto
 var ultima_direcao: String = "baixo"
@@ -75,12 +77,15 @@ func _physics_process(delta):
 		else:
 			tentar_interagir()
 
-	# Ataque corpo a corpo (precisa ter a arma; não funciona em cima de uma caixa)
+	# Ataque corpo a corpo: só virado para a frente (a arte de ataque é só de frente),
+	# precisa da arma e não funciona em cima de uma caixa.
 	if Input.is_action_just_pressed("atacar") and pode_atacar and not esta_subindo:
-		if tem_item("arma"):
+		if not tem_item("arma"):
+			print("Você não tem uma arma para atacar.")
+		elif ultima_direcao == "baixo":
 			atacar()
 		else:
-			print("Você não tem uma arma para atacar.")
+			print("Só é possível atacar virado para a frente.")
 
 	if esta_subindo:
 		return
@@ -94,20 +99,21 @@ func _physics_process(delta):
 		_processar_passos(delta)
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
-		animation_player.play("idle_" + ultima_direcao)
+		if not atacando:
+			_tocar_anim("idle")
 		tempo_passo = 0.0
 
 	move_and_slide()
-	
+
 	# Checa se o jogador está segurando o botão de correr E está se movendo
 	if Input.is_action_pressed("correr") and input_direction != Vector2.ZERO:
 		speed = velocidade_corrida
 		esta_correndo = true
-		animation_player.speed_scale = 1.5 # Acelera a animação da perna
+		anim.speed_scale = 1.5 # Acelera a animação da perna
 	else:
 		speed = velocidade_caminhada
 		esta_correndo = false
-		animation_player.speed_scale = 1.0 # Velocidade normal
+		anim.speed_scale = 1.0 # Velocidade normal
 
 	# Lógica de empurrão DEPOIS do move_and_slide
 	if raycast_interacao.is_colliding():
@@ -134,38 +140,49 @@ func _physics_process(delta):
 
 
 func _atualizar_animacao_movimento(dir: Vector2):
-	# Decide qual animação tocar baseado na direção dominante
+	# Define a direção do olhar (também usada pelo cone de ataque)
 	if abs(dir.y) >= abs(dir.x):
-		# Movimento vertical é dominante
-		if dir.y > 0:
-			ultima_direcao = "baixo"
-			sprite.flip_h = false
-			animation_player.play("walk_down")
-		else:
-			ultima_direcao = "cima"
-			sprite.flip_h = false
-			# Se não tiver walk_up ainda, usa walk_down espelhado verticalmente
-			if animation_player.has_animation("walk_up"):
-				animation_player.play("walk_up")
-			else:
-				animation_player.play("walk_down")
+		ultima_direcao = "baixo" if dir.y > 0 else "cima"
 	else:
-		# Movimento horizontal é dominante
-		# Usamos walk_right e espelhamos para a esquerda
-		if dir.x > 0:
-			ultima_direcao = "direita"
-			sprite.flip_h = false
-			if animation_player.has_animation("walk_right"):
-				animation_player.play("walk_right")
+		ultima_direcao = "direita" if dir.x > 0 else "esquerda"
+	if not atacando:
+		_tocar_anim("walk")
+
+# Toca a animação certa pela direção e estado (com/sem barra).
+# A arte de lado olha para a direita; "esquerda" usa a mesma espelhada (flip_h).
+# Lado e costas ainda não têm versão "parado", então o idle deles é uma pose fixa.
+func _tocar_anim(acao: String):
+	var com = tem_item("arma")
+	match ultima_direcao:
+		"baixo":
+			anim.flip_h = false
+			if acao == "walk":
+				anim.play("walk_baixo_com" if com else "walk_baixo_sem")
 			else:
-				animation_player.play("walk_down")
-		else:
-			ultima_direcao = "esquerda"
-			sprite.flip_h = true
-			if animation_player.has_animation("walk_right"):
-				animation_player.play("walk_right")
+				anim.play("idle_baixo_com" if com else "idle_baixo_sem")
+		"cima":
+			anim.flip_h = false
+			if acao == "walk":
+				anim.play("walk_cima_com" if com else "walk_cima_sem")
 			else:
-				animation_player.play("walk_down")
+				anim.play("idle_cima_com" if com else "idle_cima")
+		_:  # direita / esquerda
+			var dir_d = (ultima_direcao == "direita")
+			if acao == "walk":
+				# Lado tem quadros próprios para cada direção (não espelha)
+				anim.flip_h = false
+				if com:
+					anim.play("walk_lado_com_dir" if dir_d else "walk_lado_com_esq")
+				else:
+					anim.play("walk_lado_sem_dir" if dir_d else "walk_lado_sem_esq")
+			else:
+				# Parado de lado: pose fixa virada para a direção certa (com/sem barra)
+				if com:
+					anim.flip_h = false
+					anim.play("idle_lado_com_dir" if dir_d else "idle_lado_com_esq")
+				else:
+					anim.flip_h = not dir_d
+					anim.play("idle_lado")
 
 
 # Toca o som de passos em intervalos enquanto o jogador anda (mais rápido correndo).
@@ -191,9 +208,12 @@ func _direcao_para_vetor() -> Vector2:
 # Golpeia inimigos que estejam à frente, dentro do alcance.
 func atacar():
 	pode_atacar = false
+	atacando = true
 	var direcao_golpe = _direcao_para_vetor()
 	print("Golpe! Direção: ", ultima_direcao)
-	_mostrar_golpe(direcao_golpe)
+	# Animação de ataque (arte de frente por enquanto, em qualquer direção)
+	anim.flip_h = false
+	anim.play("atacar_baixo")
 	AudioManager.sfx("golpe")
 
 	for inimigo in get_tree().get_nodes_in_group("inimigo"):
@@ -207,6 +227,9 @@ func atacar():
 		if distancia <= alcance_golpe and para_inimigo.dot(direcao_golpe) > 0.3:
 			inimigo.tomar_dano(dano_golpe)
 
+	# Espera a animação do golpe terminar antes de voltar a andar
+	await anim.animation_finished
+	atacando = false
 	# Cooldown: espera antes de poder atacar de novo
 	await get_tree().create_timer(cooldown_golpe).timeout
 	pode_atacar = true
