@@ -1,0 +1,28 @@
+# Sobe o "Oráculo": servidor Ollama + modelo, prontos para o jogo consumir.
+# O jogo (Godot) roda nativo no host e conversa com este container em 127.0.0.1:11434.
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: oraculo-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      # Persiste os modelos baixados entre execuções (não baixa de novo toda vez)
+      - ollama-models:/root/.ollama
+      # Script que sobe o servidor e garante o modelo
+      - ./docker/ollama-entrypoint.sh:/ollama-entrypoint.sh:ro
+    environment:
+      # Deve casar com OLLAMA_MODEL em oraculo_3.gd
+      OLLAMA_MODEL: "llama3.2:3b"
+    entrypoint: ["/usr/bin/bash", "/ollama-entrypoint.sh"]
+    healthcheck:
+      # "healthy" só quando o modelo já está disponível
+      test: ["CMD-SHELL", "ollama list | grep -q llama3.2"]
+      interval: 5s
+      timeout: 10s
+      retries: 60
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  ollama-models:
