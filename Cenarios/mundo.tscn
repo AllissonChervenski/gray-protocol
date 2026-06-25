@@ -5,11 +5,9 @@
 [ext_resource type="PackedScene" uid="uid://c80dojjec18ms" path="res://Personagens/jogador.tscn" id="2_ajst4"]
 [ext_resource type="PackedScene" uid="uid://c1mp8ocyg2bef" path="res://Personagens/inimigo.tscn" id="3_p4k87"]
 [ext_resource type="PackedScene" uid="uid://jr42umu2elju" path="res://oraculo.tscn" id="4_p4k87"]
-[ext_resource type="Script" uid="uid://cn1uvu7h4o1q" path="res://oraculo_3.gd" id="6_2oq56"]
 [ext_resource type="PackedScene" uid="uid://5tmjna8mlawu" path="res://Itens/chave.tscn" id="6_pttki"]
 [ext_resource type="PackedScene" uid="uid://dsm1pgn13bvgv" path="res://Interativos/porta.tscn" id="7_0ce3k"]
 [ext_resource type="PackedScene" uid="uid://df2usidlhrryj" path="res://Interativos/caixa_objeto.tscn" id="8_84oly"]
-[ext_resource type="PackedScene" uid="uid://chcvmgmcubkt8" path="res://Inventario/inventario.tscn" id="9_0ce3k"]
 [ext_resource type="PackedScene" uid="uid://cl065i1g5kv22" path="res://Itens/arma.tscn" id="10_84oly"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ckkb"]
@@ -43,6 +41,7 @@ tile_set = SubResource("TileSet_2hh7m")
 
 [node name="Jogador" parent="." unique_id=628331959 instance=ExtResource("2_ajst4")]
 position = Vector2(6, -36)
+vida = 10
 
 [node name="Inimigo" parent="." unique_id=1889121411 groups=["inimigo"] instance=ExtResource("3_p4k87")]
 position = Vector2(209, 154)
@@ -58,14 +57,8 @@ position = Vector2(-240, 31)
 
 [node name="CaixaObjeto" parent="." unique_id=814051192 instance=ExtResource("8_84oly")]
 position = Vector2(-101, 95)
-<<<<<<< HEAD
->>>>>>> 5b496cc7e271149731e3f66da415eb80838bcce4
-=======
 
-[node name="InventarioUI" parent="." unique_id=1453663848 instance=ExtResource("9_0ce3k")]
-
-[node name="ItemColetavel2" parent="." unique_id=1899971790 instance=ExtResource("10_84oly")]
-position = Vector2(258, -89)
+[node name="Arma" parent="." unique_id=1987630332 instance=ExtResource("10_84oly")]
+position = Vector2(160, -59)
 collision_layer = 4
 collision_mask = 0
->>>>>>> c7beb03 (fix: take weapon with 'E')
