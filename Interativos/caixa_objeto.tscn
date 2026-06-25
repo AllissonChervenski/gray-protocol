@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://df2usidlhrryj"]
 
 [ext_resource type="Script" uid="uid://bmk3e60vpjk4d" path="res://Interativos/caixa_objeto.gd" id="1_c6scd"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_jq64t"]
-load_path = "res://.godot/imported/Gemini_Generated_Image_mbfswhmbfswhmbfs-removebg-preview.png-76b4cd5579d1d9679b0d6de6830d60f1.ctex"
+[ext_resource type="Texture2D" uid="uid://borxaj4qrfftk" path="res://Interativos/Gemini_Generated_Image_mbfswhmbfswhmbfs-removebg-preview.png" id="2_stnob"]
 
 [node name="CaixaObjeto" type="CharacterBody2D" unique_id=814051192 groups=["subivel"]]
 y_sort_enabled = true
@@ -14,7 +12,7 @@ script = ExtResource("1_c6scd")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=192427467]
 scale = Vector2(0.19999999, 0.19999999)
-texture = SubResource("CompressedTexture2D_jq64t")
+texture = ExtResource("2_stnob")
 offset = Vector2(-190, -60)
 region_enabled = true
 region_rect = Rect2(129.70331, 0, 420.18634, 344.0149)

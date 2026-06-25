@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://c80dojjec18ms"]
+[gd_scene format=3 uid="uid://c80dojjec18ms"]
 
 [ext_resource type="Script" uid="uid://dy2ristcv6ch7" path="res://Personagens/jogador.gd" id="1_qv8bx"]
-[ext_resource type="SpriteFrames" path="res://Personagens/heroi.tres" id="2_hero"]
+[ext_resource type="SpriteFrames" uid="uid://c6nqt3m18kmah" path="res://Personagens/heroi.tres" id="2_hero"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5g5eo"]
 radius = 150.0
@@ -41,4 +41,4 @@ hit_from_inside = true
 position = Vector2(0, -78)
 scale = Vector2(0.8, 0.8)
 sprite_frames = ExtResource("2_hero")
-animation = &"idle_baixo_sem"
+animation = &"walk_lado_sem_dir"

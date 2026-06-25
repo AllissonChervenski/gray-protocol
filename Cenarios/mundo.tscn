@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://5tmjna8mlawu" path="res://Itens/chave.tscn" id="6_pttki"]
 [ext_resource type="PackedScene" uid="uid://dsm1pgn13bvgv" path="res://Interativos/porta.tscn" id="7_0ce3k"]
 [ext_resource type="PackedScene" uid="uid://df2usidlhrryj" path="res://Interativos/caixa_objeto.tscn" id="8_84oly"]
+[ext_resource type="PackedScene" uid="uid://chcvmgmcubkt8" path="res://Inventario/inventario.tscn" id="9_0ce3k"]
+[ext_resource type="PackedScene" uid="uid://cl065i1g5kv22" path="res://Itens/arma.tscn" id="10_84oly"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ckkb"]
 texture = ExtResource("1_expfn")
@@ -56,3 +58,14 @@ position = Vector2(-240, 31)
 
 [node name="CaixaObjeto" parent="." unique_id=814051192 instance=ExtResource("8_84oly")]
 position = Vector2(-101, 95)
+<<<<<<< HEAD
+>>>>>>> 5b496cc7e271149731e3f66da415eb80838bcce4
+=======
+
+[node name="InventarioUI" parent="." unique_id=1453663848 instance=ExtResource("9_0ce3k")]
+
+[node name="ItemColetavel2" parent="." unique_id=1899971790 instance=ExtResource("10_84oly")]
+position = Vector2(258, -89)
+collision_layer = 4
+collision_mask = 0
+>>>>>>> c7beb03 (fix: take weapon with 'E')

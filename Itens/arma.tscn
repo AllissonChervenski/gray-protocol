@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cl065i1g5kv22"]
+
+[ext_resource type="Script" uid="uid://dkyft1r5e0aat" path="res://Itens/item_coletavel.gd" id="1_vowwx"]
+[ext_resource type="Texture2D" uid="uid://dirxvs42lhip7" path="res://Itens/barra_ferro.png" id="2_tex"]
+[ext_resource type="Resource" uid="uid://dgsw02gbkqr3h" path="res://Itens/arma.tres" id="3_dados"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(28, 28)
+
+[node name="Arma" type="StaticBody2D" unique_id=1987630332]
+script = ExtResource("1_vowwx")
+dados = ExtResource("3_dados")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1388158118]
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("2_tex")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=783865096]
+shape = SubResource("RectangleShape2D_1")
